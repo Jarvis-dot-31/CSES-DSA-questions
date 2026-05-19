@@ -4,21 +4,22 @@ using namespace std;
 int main(){
     int n;
     cin>>n;
-    vector<int>dp(n+1,0);
-    int temp;
+    vector<int>dp(n+1,INT_MAX);
+    dp[0]=0;
     for (int i=1;i<=n;i++){
-        temp=i;
-        int ans=INT_MAX;
         vector<int>digits;
-        while(temp>0){
-            digits.push_back(temp%10);
-            temp/=10;
+        int t=i;
+        while(t>0){
+            digits.push_back(t%10);
+            // cout<<t%10<<"\n";
+            t/=10;
         }
-        for (int j=0;j<digits.size();j++){
-            if (digits[j]==0) continue;
-            ans=min(ans,1+dp[i-digits[j]]);
+        for (int x=0;x<digits.size();x++){
+            // cout<<i<<" "<<digits[x]<<"\n";
+            if (digits[x]==0) continue;
+            dp[i]=min(dp[i],1+dp[i-digits[x]]);
         }
-        dp[i]=ans;
+        // cout<<i<<" "<<dp[i]<<"\n";
     }
     cout<<dp[n]<<"\n";
 }
