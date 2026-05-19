@@ -1,41 +1,31 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-string num;
-long long dp[20][11][2][2];
-
-long long solve(int pos, int prev, int tight, int started) {
-    if (pos == num.size()) return 1;
-
-    if (dp[pos][prev][tight][started] != -1)
-        return dp[pos][prev][tight][started];
-
-    int limit = (tight ? num[pos] - '0' : 9);
-    long long ans = 0;
-
-    for (int d = 0; d <= limit; d++) {
-        int new_tight = tight && (d == limit);
-
-        if (!started && d == 0) {
-            ans += solve(pos + 1, 10, new_tight, 0);
-        } else {
-            if (d == prev) continue;
-            ans += solve(pos + 1, d, new_tight, 1);
-        }
+long long dp[20][2][2][11];
+long long helper(string &a,int idx,bool tight,bool notstarted,int prev){
+    if (idx==a.size()) return 1;
+    if (dp[idx][tight][notstarted][prev+1]!=-1) return dp[idx][tight][notstarted][prev+1];
+    int limit=(tight)?a[idx]-'0':9;
+    long long ans=0;
+    // cout<<idx<<" "<<tight<<" "<<prev<<" "<<notstarted<<"\n"; 
+    for (int i=0;i<=limit;i++){
+        if (i==prev && !notstarted) continue;
+        bool newtight=(tight&(i==limit));
+        bool newstarted=(notstarted&(i==0));
+        ans+=helper(a,idx+1,newtight,newstarted,i);
     }
-
-    return dp[pos][prev][tight][started] = ans;
+    return dp[idx][tight][notstarted][prev+1]=ans;
 }
 
-long long countNumbers(long long n) {
-    num = to_string(n);
-    memset(dp, -1, sizeof(dp));
-    return solve(0, 10, 1, 0);
-}
-
-int main() {
-    long long L, R;
-    cin >> L >> R;
-
-    cout << countNumbers(R) - countNumbers(L - 1) << endl;
+int main(){
+    long long x,y;
+    cin>>x>>y;
+    x--;
+    memset(dp,-1,sizeof(dp));
+    string t=to_string(x);
+    long long c=helper(t,0,true,true,-1);
+    memset(dp,-1,sizeof(dp));
+    t=to_string(y);
+    long long d=helper(t,0,true,true,-1);
+    cout<<d-c<<"\n";
 }
