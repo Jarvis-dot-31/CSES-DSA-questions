@@ -3,22 +3,23 @@ using namespace std;
 
 bool ans=false;
 
-void dfs(vector<vector<int>>&adj,vector<bool>&vis,vector<int>&path,int id){
-    if (vis[id]){
-        // cout<<id<<"\n";
+void dfs(vector<vector<int>>&adj,vector<bool>&vis,vector<int>&path,unordered_set<int>&set,int id){
+    if (set.find(id)!=set.end()){
         path.push_back(id);
         ans=true;
         return;
     }
+    if (vis[id]) return;
     if (ans) return;
     vis[id]=true;
     path.push_back(id);
+    set.insert(id);
     for (int i=0;i<adj[id].size();i++){
         if (ans) continue;
         // cout<<id<<" "<<adj[id][i]<<"\n";
-        dfs(adj,vis,path,adj[id][i]);
+        dfs(adj,vis,path,set,adj[id][i]);
     }
-    vis[id]=false;
+    set.erase(id);
     if (!ans) path.pop_back();
 }
 
@@ -36,7 +37,8 @@ int main(){
     vector<int>path;
     for (int i=1;i<=n;i++){
         if (!vis[i]){
-            dfs(adj,vis,path,i);
+            unordered_set<int>st;
+            dfs(adj,vis,path,st,i);
         }
     }
     int id=INT_MAX;
